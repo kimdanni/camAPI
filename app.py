@@ -6,7 +6,7 @@ from datetime import datetime
 import sys
 from rdsType import *
 
-from flask import Flask ,jsonify
+from flask import Flask ,jsonify, request
 from flask_cors import CORS
 from flask import make_response
 
@@ -20,7 +20,6 @@ import timeit
 from pathlib import Path 
 from playsound import playsound
 import pymysql
-import requests
 from datetime import datetime
 
 app = Flask(__name__)
@@ -105,9 +104,8 @@ def getGtts():
 
 def writeDatabase(cat_id, chatt_id, cat_img, cat_answer):
     #write Img to local folder 
-    file_name = "./catImg/c_{}chat_{}".format(cat_id, chatt_id)
+    file_name = "./catImg/{}_c{}_chat.jpg".format(cat_id, chatt_id)
     cv2.imwrite(file_name, cat_img)
-
     conn, cursor = connect_RDS(HOST,PORT,USERNAME,PASSWORD,DATABASE)
 
     """TODO: 만약 python server 에서 응답이 중간에 끊겼을 경우 -> foreign references(update, delete 동시에 가능) (id mapping 이 안될경우 처리)"""
@@ -156,7 +154,7 @@ def cam_work(cat_id, chatt_id):
                 dstr = base64.b64encode(cv2.imencode('.jpg', frame3)[1]).decode('utf8')
                 cat_id = int(cat_id)
                 cat_response = {'cat_id' : cat_id, 'catImg': dstr, 'catAnswer': chosenAnswer}, 200
-                writeDatabase(cat_id, chatt_id, frame3, chosenAnswer)
+                #writeDatabase(cat_id, chatt_id, frame3, chosenAnswer)
                 return jsonify(cat_response)
 
             pre_img1 = pre_img2
@@ -165,11 +163,10 @@ def cam_work(cat_id, chatt_id):
 # get api
 @app.route("/getCat", methods=['POST'])
 def getCat():
-    body = requests.get_json()
+    body = request.json
     cat_id = body['cid']
     chatt_id = body['chattid']
-    message = body['message']
-    return cam_work(cat_id, chatt_id, message)
+    return cam_work(cat_id, chatt_id)
 
 if __name__ == '__main__':
     app.run(host="", port="3000")
