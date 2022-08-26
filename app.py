@@ -143,7 +143,7 @@ def cam_work(cat_id, chatt_id, uid):
 
     else:
         chosenAnswer = chooseAnswer(False)
-        cat_response = {'cat_id' : int(cat_id), 'catImg': None, 'catAnswer': chosenAnswer}, 200
+        cat_response = {'uid' : uid, 'cat_id' : int(cat_id), 'catImg': None, 'catAnswer': chosenAnswer}, 200
         #writeDatabase(cat_id, chatt_id, "", chosenAnswer)
         return jsonify(cat_response)
 
