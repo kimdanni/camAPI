@@ -102,7 +102,7 @@ def getGtts():
     num = random.randrange(1,5)
     path = mp3_path + str(num) + ".mp3"
     print(str(path))
-    #playsound(path)
+    playsound(path)
 
 
 def writeDatabase(cat_id, chatt_id, cat_img, cat_answer):
